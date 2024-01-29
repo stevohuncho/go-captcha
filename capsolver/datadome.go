@@ -1,8 +1,12 @@
 package capsolver
 
+import (
+	"fmt"
+	"net/url"
+)
+
 type datadomePayload struct {
 	Type       datadomeType `json:"type"`
-	WebsiteURL string       `json:"websiteURL"`
 	CaptchaUrl string       `json:"captchaUrl"`
 	Proxy      string       `json:"proxy"`
 	UserAgent  string       `json:"userAgent"`
@@ -15,10 +19,11 @@ const (
 )
 
 func Datadome(siteUrl string, captchaUrl string, proxy *proxy, userAgent string) Payload {
+	referer := url.Values{}
+	referer.Add("referer", siteUrl)
 	payload := &datadomePayload{
 		Type:       dataDomeSliderTask,
-		WebsiteURL: siteUrl,
-		CaptchaUrl: captchaUrl,
+		CaptchaUrl: fmt.Sprintf("%s&%s", captchaUrl, referer.Encode()),
 		Proxy:      proxy.parse(),
 		UserAgent:  userAgent,
 	}
